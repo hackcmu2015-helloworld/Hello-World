@@ -2,10 +2,13 @@ package org.hackcmu.helloworld;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -69,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton menuButton;
 
     private CardView card;
+    private float cardOldX;
+    private float cardOldY;
 
     public static CityPlans mCityPlans;
 
@@ -147,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
     private void hideCard() {
         if(card.getVisibility() == View.VISIBLE) {
             // get the center for the clipping circle
-            int cx = 0;
-            int cy = card.getHeight();
+            int cx = 20;
+            int cy = card.getHeight() - 20;
 
             // get the initial radius for the clipping circle
             int initialRadius = card.getWidth();
@@ -156,26 +162,55 @@ public class MainActivity extends AppCompatActivity {
             // create the animation (the final radius is zero)
             Animator anim =
                     ViewAnimationUtils.createCircularReveal(card, cx, cy, initialRadius, 0);
+            anim.setDuration(180);
 
-            // make the view invisible when the animation is done
+            float x1 = menuButton.getX();
+            float y1 = menuButton.getY();
+
+            //ending x co-ordinates
+            float x3 = cardOldX;
+            float y3 = cardOldY;
+
+            final Path path = new Path();
+            path.moveTo(x1, y1);
+
+            final float x2 = (x1 + x3) / 2;
+            final float y2 = y3;
+
+            path.quadTo(x2, y2, x3, y3);
+
+            final ObjectAnimator fabAnimator = ObjectAnimator.ofFloat(menuButton, View.X, View.Y, path);
+            fabAnimator.setInterpolator(new AccelerateInterpolator());
+            fabAnimator.setDuration(130);
+            fabAnimator.setStartDelay(150);
+
+            AnimatorSet as = new AnimatorSet();
+            as.playTogether(fabAnimator, anim);
+
             anim.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
                     card.setVisibility(View.INVISIBLE);
                 }
             });
 
-            // start the animation
-            anim.start();
+            fabAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    menuButton.setVisibility(View.VISIBLE);
+                }
+            });
+
+            // make the view visible and start the animation
+            as.start();
         }
     }
 
     private void showCard() {
         if(card.getVisibility() == View.INVISIBLE) {
             // get the center for the clipping circle
-            int cx = 0;
-            int cy = card.getHeight();
+            int cx = 20;
+            int cy = card.getHeight() - 20;
 
             // get the final radius for the clipping circle
             int finalRadius = Math.max(card.getWidth(), card.getHeight());
@@ -183,10 +218,49 @@ public class MainActivity extends AppCompatActivity {
             // create the animator for this view (the start radius is zero)
             Animator anim =
                     ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+            anim.setDuration(180);
+            anim.setStartDelay(130);
+
+            float x1 = menuButton.getX();
+            float y1 = menuButton.getY();
+            cardOldX = x1;
+            cardOldY = y1;
+
+            //ending x co-ordinates
+            float x3 = card.getX() + 30;
+            float y3 = card.getY() + card.getHeight() - menuButton.getHeight() - 35;
+
+            final Path path = new Path();
+            path.moveTo(x1, y1);
+
+            final float x2 = (x1 + x3) / 2;
+            final float y2 = y1;
+
+            path.quadTo(x2, y2, x3, y3);
+
+            final ObjectAnimator fabAnimator = ObjectAnimator.ofFloat(menuButton, View.X, View.Y, path);
+            fabAnimator.setInterpolator(new AccelerateInterpolator());
+            fabAnimator.setDuration(200);
+
+            AnimatorSet as = new AnimatorSet();
+            as.playTogether(fabAnimator, anim);
+
+            fabAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    menuButton.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    card.setVisibility(View.VISIBLE);
+                }
+            });
 
             // make the view visible and start the animation
-            card.setVisibility(View.VISIBLE);
-            anim.start();
+            as.start();
         }
     }
 

@@ -52,7 +52,7 @@ public class MapActivity extends Activity {
         steps_left_text.setTypeface(myTypeface);
         prompts_text.setTypeface(myTypeface);
 
-//      Visited Location animation
+        // Visited Location animation
         Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.twin);
         visitedLocation.startAnimation(myFadeInAnimation);
 
