@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private long LastSync;
 
     private FloatingActionButton mapButton;
+    private FloatingActionButton menuButton;
+
+    private CardView card;
 
     public static CityPlans mCityPlans;
 
@@ -93,7 +97,14 @@ public class MainActivity extends AppCompatActivity {
         initialize();
 
         RelativeLayout main = (RelativeLayout) findViewById(R.id.main_frame);
-        main.setPadding(0,getStatusBarHeight(),0,0);
+        main.setPadding(0, getStatusBarHeight(), 0, 0);
+
+        main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideCard();
+            }
+        });
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         int defaultTotalSteps = 0;
@@ -117,7 +128,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        card = (CardView) findViewById(R.id.main_card);
+
+        menuButton = (FloatingActionButton) findViewById(R.id.FAB_menu);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCard();
+            }
+        });
+
         buildFitnessClient();
+    }
+
+    private void hideCard() {
+        card.setVisibility(View.INVISIBLE);
+    }
+
+    private void showCard() {
+        card.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -404,8 +433,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupCurrentCity() {
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "karla_bold.ttf");
-        mCityPlans = new CityPlans(getTotalSteps());
-//        mCityPlans = new CityPlans(18000);
+//        mCityPlans = new CityPlans(getTotalSteps());
+        mCityPlans = new CityPlans(18000);
         TextView cityname_text = (TextView) findViewById(R.id.main_cityname);
         cityname_text.setText(getResources().getString(mCityPlans.getCurrentCityName()));
         cityname_text.setTextColor(getResources().getColor(mCityPlans.getCurrentSecColor()));

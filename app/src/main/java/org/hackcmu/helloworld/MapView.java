@@ -44,14 +44,14 @@ public class MapView extends View {
         int steps = MainActivity.mCityPlans.getCurrentSteps();
         startTime = getCurrentTime();
 
-        while(i < 5 && steps >= dis[i]){
+        while(i < 6 && steps >= dis[i]){
             i++;
         }
         i--;
         int exceed_amount = steps - dis[i];
         int xdiff, ydiff,interv;
 
-        if(i < 4){
+        if(i < 6){
             if(i % 2 == 1) {
                 passedMidpoint = false;
             }
