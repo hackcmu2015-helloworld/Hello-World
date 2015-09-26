@@ -45,4 +45,8 @@ public class CityPlans {
     public int getCurrentSteps() {
         return currentSteps;
     }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
 }

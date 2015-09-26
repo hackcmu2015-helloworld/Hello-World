@@ -1,5 +1,7 @@
 package org.hackcmu.helloworld;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -142,11 +145,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void hideCard() {
-        card.setVisibility(View.INVISIBLE);
+        if(card.getVisibility() == View.VISIBLE) {
+            // get the center for the clipping circle
+            int cx = 0;
+            int cy = card.getHeight();
+
+            // get the initial radius for the clipping circle
+            int initialRadius = card.getWidth();
+
+            // create the animation (the final radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(card, cx, cy, initialRadius, 0);
+
+            // make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    card.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            // start the animation
+            anim.start();
+        }
     }
 
     private void showCard() {
-        card.setVisibility(View.VISIBLE);
+        if(card.getVisibility() == View.INVISIBLE) {
+            // get the center for the clipping circle
+            int cx = 0;
+            int cy = card.getHeight();
+
+            // get the final radius for the clipping circle
+            int finalRadius = Math.max(card.getWidth(), card.getHeight());
+
+            // create the animator for this view (the start radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(card, cx, cy, 0, finalRadius);
+
+            // make the view visible and start the animation
+            card.setVisibility(View.VISIBLE);
+            anim.start();
+        }
     }
 
     @Override
