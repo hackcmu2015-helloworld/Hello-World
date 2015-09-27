@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -148,6 +149,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buildFitnessClient();
+
+        FrameLayout backdoor = (FrameLayout) findViewById(R.id.backdoor);
+        backdoor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(getTotalSteps() > 15000) {
+                    totalSteps = 3000;
+                    setupCurrentCity();
+                }
+                addToStepCount(3000);
+            }
+        });
     }
 
     private void hideCard() {
@@ -182,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             final ObjectAnimator fabAnimator = ObjectAnimator.ofFloat(menuButton, View.X, View.Y, path);
             fabAnimator.setInterpolator(new AccelerateInterpolator());
             fabAnimator.setDuration(130);
-            fabAnimator.setStartDelay(150);
+            fabAnimator.setStartDelay(180);
 
             AnimatorSet as = new AnimatorSet();
             as.playTogether(fabAnimator, anim);
@@ -548,8 +561,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupCurrentCity() {
         Typeface myTypeface = Typeface.createFromAsset(getAssets(), "karla_bold.ttf");
-//        mCityPlans = new CityPlans(getTotalSteps());
-        mCityPlans = new CityPlans(18000);
+        mCityPlans = new CityPlans(getTotalSteps());
+//        mCityPlans = new CityPlans(12000);
         TextView cityname_text = (TextView) findViewById(R.id.main_cityname);
         cityname_text.setText(getResources().getString(mCityPlans.getCurrentCityName()));
         cityname_text.setTextColor(getResources().getColor(mCityPlans.getCurrentSecColor()));

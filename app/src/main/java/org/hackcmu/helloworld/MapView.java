@@ -38,7 +38,10 @@ public class MapView extends View {
 
     public MapView(Context context, AttributeSet attrs){
         super(context,attrs);
-        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.map_london);
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.map);
+        if(MainActivity.mCityPlans.getCurrentLevel() >= 1) {
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.map_london);
+        }
         locator = BitmapFactory.decodeResource(getResources(), R.drawable.ico_paw);
 
         int steps = MainActivity.mCityPlans.getCurrentSteps();
